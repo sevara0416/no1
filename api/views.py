@@ -2,37 +2,55 @@ from django.shortcuts import render
 from .models import FootballClub
 from rest_framework import viewsets
 from .serializers import FootballClubSerializer
-from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView, RetrieveUpdateAPIView, RetrieveDestroyAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
 
-class FootballClubListAPIView(ListAPIView):
-    queryset=FootballClub.objects.all()
-    serializer_class=FootballClubSerializer
+@api_view(["GET"])
+def FootballClubListView(request):
+    footballclubs=FootballClub.objects.all()
+    serializer=FootballClubSerializer(footballclubs, many=True)
+    return Response(serializer.data)
 
-class FootballClubCreateAPIView(CreateAPIView):
-    queryset=FootballClub.objects.all()
-    serializer_class=FootballClubSerializer
-    
-class FootballClubRetrieveAPIView(RetrieveAPIView):
-    queryset=FootballClub.objects.all()
-    serializer_class=FootballClubSerializer
-    
-class FootballClubUpdateAPIView(UpdateAPIView):
-    queryset=FootballClub.objects.all()
-    serializer_class=FootballClubSerializer
-    
-class FootballClubDestroyAPIView(DestroyAPIView):
-    queryset=FootballClub.objects.all()
-    serializer_class=FootballClubSerializer
+@api_view(["GET", "POST"])
+def footballclub_create(request):
+    if request.method == "GET":
+        return Response({"message": "POST request yuborn"})
+    serializer = FootballClubSerializer(data = request.data)
 
-class FootballClubRetrieveUpdateAPIView(RetrieveUpdateAPIView):
-    queryset=FootballClub.objects.all()
-    serializer_class=FootballClubSerializer
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     
-class FootballClubRetrieveDestroyAPIView(RetrieveDestroyAPIView):
-    queryset=FootballClub.objects.all()
-    serializer_class=FootballClubSerializer
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["GET"])
+def FootballClubDetailView(request, pk):
+    footballclubs=FootballClub.objects.get(pk=pk)
+    serializer=FootballClubSerializer(footballclubs)
+    return Response(serializer.data)
+
+
+@api_view(["PATCH","PUT"])
+def footballclub_update(request, pk):
+    footballclubs= FootballClub.objects.get(pk=pk)
+    if request.method == "PUT":
+        serializer= FootballClubSerializer(footballclubs, data=request.data)
+    else:
+        serializer = FootballClubSerializer(footballclubs, data=request.data, partial=True)
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
     
-class FootballClubRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
-    queryset=FootballClub.objects.all()
-    serializer_class=FootballClubSerializer
-    
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["DELETE"])
+def footballclub_delete(request, pk):
+    footballclubs= FootballClub.objects.get(pk=pk)
+    footballclubs.delete()
+
+    return Response({"message":"post ochirld"}, status=status.HTTP_204_NO_CONTENT)
+
