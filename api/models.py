@@ -1,4 +1,11 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser
+from django.utils.text import slugify
+
+class CustomUser(AbstractUser):
+    name=models.CharField(max_length=30, blank=False, null=False)
+    age=models.PositiveIntegerField(default=18, blank=False)
+    phone_number=models.CharField(max_length=50)
 
 # Create your models here.
 class FootballClub(models.Model):
