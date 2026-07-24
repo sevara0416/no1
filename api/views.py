@@ -21,7 +21,7 @@ class ProfileAPIView(APIView):
 class LogoutAPIView(APIView):
     permission_classes= [IsAuthenticated]
 
-    def post(self, request):
+    def futballl(self, request):
         try:
             refresh_token=request.data["refresh"]
             token = RefreshToken(refresh_token)
